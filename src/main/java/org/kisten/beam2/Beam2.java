@@ -5,13 +5,12 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-public class Beam2 extends JavaPlugin {
+public final class Beam2 extends JavaPlugin {
 
         @Override
         public void onEnable() {
@@ -48,7 +47,6 @@ public class Beam2 extends JavaPlugin {
         }
 
         private void createLaser(Location startLocation, Vector direction) {
-            World world = startLocation.getWorld();
             Location laserLocation = startLocation.clone();
 
             // Создаем лазер из блоков
