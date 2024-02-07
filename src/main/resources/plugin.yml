@@ -1,0 +1,11 @@
+name: Beam2
+version: '${project.version}'
+main: org.kisten.beam2.Beam2
+api-version: '1.20'
+commands:
+  laser:
+    description: "Spawning laser beam"
+    usage: "/laser"
+    aliases: [laser]
+    permission: beam2.command.laser
+    permission-message: "You don't have permission to spawn a laser beam"
