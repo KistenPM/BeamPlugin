@@ -29,7 +29,7 @@ public final class Beam2 extends JavaPlugin {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 // Получаем текущую локацию игрока
-                Location playerLocation = player.getLocation();
+                Location playerLocation = player.getEyeLocation();
                 // Получаем направление взгляда игрока
                 Vector direction = playerLocation.getDirection();
                 // Создаем лазер в направлении координаты
@@ -41,6 +41,10 @@ public final class Beam2 extends JavaPlugin {
     }
     private void createLaser(Location startLocation, Vector direction) {
         Location laserLocation = startLocation.clone();
+        Location Destination = new Location(laserLocation.getWorld(), 0, 100, 0);
+        Vector travel = new Vector(Destination.getX() - startLocation.getX(), Destination.getY() - startLocation.getY(), Destination.getZ() - startLocation.getZ());
+        double numTrips = travel.length() / 0.5;
+        travel.divide(new Vector(numTrips, numTrips, numTrips));
         // Создаем лазер из блоков
         new BukkitRunnable() {
             int distance = 0;
@@ -49,9 +53,9 @@ public final class Beam2 extends JavaPlugin {
                 // Увеличиваем дистанцию на 1
                 distance++;
                 // Получаем следующую локацию лазера
-                laserLocation.add(direction);
+                laserLocation.add(travel);
                 // Замена с блоков на партиклы
-                new ParticleBuilder(Particle.REDSTONE).allPlayers().location(laserLocation).offset(.5, .5, .5).extra(0.1).color(Color.RED).count(20).spawn();
+                new ParticleBuilder(Particle.REDSTONE).allPlayers().location(laserLocation).offset(.15, .15, .15).extra(0.1).color(Color.RED).count(20).spawn();
                 new BukkitRunnable() {
                     @Override
                     public void run() {
@@ -66,7 +70,7 @@ public final class Beam2 extends JavaPlugin {
                 // block.setType(Material.REDSTONE_BLOCK);
                 // Удаляем блок спустя 60 тиков (3 секунды)
                 // Если достигнута максимальная дистанция лазера, останавливаем задачу
-                if (distance >= 15) {
+                if (distance >= numTrips) {
                     cancel();
                 }
             }
