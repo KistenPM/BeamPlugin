@@ -74,12 +74,6 @@ public final class Beam2 extends JavaPlugin {
                         }
                     }.runTaskLater(getPlugin(), 60);
 
-                    // Устанавливаем блоку материал лазера
-                    // block.setType(Material.REDSTONE_BLOCK);
-
-                    // Удаляем блок спустя 60 тиков (3 секунды)
-
-
                     // Если достигнута максимальная дистанция лазера, останавливаем задачу
                     if (distance >= 15) {
                         cancel();
