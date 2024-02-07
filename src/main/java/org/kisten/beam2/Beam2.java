@@ -1,5 +1,6 @@
 package org.kisten.beam2;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -65,27 +66,25 @@ public class Beam2 extends JavaPlugin {
                     // Получаем блок в текущей локации лазера
                     Block block = world.getBlockAt(laserLocation);
 
-                    /* Замена с блоков на партиклы
-                    Particle particle = world.spawnParticle(Particle.REDSTONE, laserLocation);
+                    // Замена с блоков на партиклы
+                    new ParticleBuilder(Particle.REDSTONE).count(20).offset(.5, .5, .5).allPlayers().location(startLocation).extra(0.1).spawn();
 
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            particle.wait(60);
+                            try {
+                                Thread.sleep(60);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
-                    }.runTaskLater(getPlugin(), 60);
-                     */
+                    }.runTaskLaterAsynchronously(getPlugin(), 60);
 
                     // Устанавливаем блоку материал лазера
-                    block.setType(Material.REDSTONE_BLOCK);
+                    // block.setType(Material.REDSTONE_BLOCK);
 
                     // Удаляем блок спустя 60 тиков (3 секунды)
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            block.setType(Material.AIR);
-                        }
-                    }.runTaskLater(getPlugin(), 60);
+
 
                     // Если достигнута максимальная дистанция лазера, останавливаем задачу
                     if (distance >= 15) {
