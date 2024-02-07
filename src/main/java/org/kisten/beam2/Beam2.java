@@ -5,6 +5,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -47,6 +48,7 @@ public class Beam2 extends JavaPlugin {
         }
 
         private void createLaser(Location startLocation, Vector direction) {
+            World world = startLocation.getWorld();
             Location laserLocation = startLocation.clone();
 
             // Создаем лазер из блоков
@@ -60,9 +62,8 @@ public class Beam2 extends JavaPlugin {
 
                     // Получаем следующую локацию лазера
                     laserLocation.add(direction);
-
                     // Замена с блоков на партиклы
-                    new ParticleBuilder(Particle.REDSTONE).count(20).offset(.5, .5, .5).allPlayers().location(startLocation).extra(0.1).spawn();
+                    new ParticleBuilder(Particle.REDSTONE).allPlayers().location(laserLocation).spawn();
 
                     new BukkitRunnable() {
                         @Override
@@ -73,7 +74,7 @@ public class Beam2 extends JavaPlugin {
                                 throw new RuntimeException(e);
                             }
                         }
-                    }.runTaskLaterAsynchronously(getPlugin(), 60);
+                    }.runTaskLater(getPlugin(), 60);
 
                     // Устанавливаем блоку материал лазера
                     // block.setType(Material.REDSTONE_BLOCK);
