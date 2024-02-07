@@ -62,12 +62,8 @@ public class Beam2 extends JavaPlugin {
 
                     // Получаем следующую локацию лазера
                     laserLocation.add(direction);
-
-                    // Получаем блок в текущей локации лазера
-                    Block block = world.getBlockAt(laserLocation);
-
                     // Замена с блоков на партиклы
-                    new ParticleBuilder(Particle.REDSTONE).count(20).offset(.5, .5, .5).allPlayers().location(startLocation).extra(0.1).spawn();
+                    new ParticleBuilder(Particle.REDSTONE).count(20).offset(.5, .5, .5).allPlayers().location(laserLocation).extra(0.1).spawn();
 
                     new BukkitRunnable() {
                         @Override
@@ -78,7 +74,7 @@ public class Beam2 extends JavaPlugin {
                                 throw new RuntimeException(e);
                             }
                         }
-                    }.runTaskLaterAsynchronously(getPlugin(), 60);
+                    }.runTaskLater(getPlugin(), 60);
 
                     // Устанавливаем блоку материал лазера
                     // block.setType(Material.REDSTONE_BLOCK);
