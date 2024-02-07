@@ -12,86 +12,70 @@ import org.jetbrains.annotations.NotNull;
 
 public final class Beam2 extends JavaPlugin {
 
-        @Override
-        public void onEnable() {
+    @Override
+    public void onEnable() {
             // Плагин включен
             getLogger().info("Плагин Laser включен!");
+    }
+
+    @Override
+    public void onDisable() {
+        // Плагин выключен
+        getLogger().info("Плагин Laser выключен!");
+    }
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
+        if (command.getName().equalsIgnoreCase("laser")) {
+            if (sender instanceof Player) {
+                Player player = (Player) sender;
+                // Получаем текущую локацию игрока
+                Location playerLocation = player.getLocation();
+                // Получаем направление взгляда игрока
+                Vector direction = playerLocation.getDirection();
+                // Создаем лазер в направлении координаты
+                createLaser(playerLocation, direction);
+                return true;
+            }
         }
-
-        @Override
-        public void onDisable() {
-            // Плагин выключен
-            getLogger().info("Плагин Laser выключен!");
-        }
-
-        @Override
-        public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
-            if (command.getName().equalsIgnoreCase("laser")) {
-                if (sender instanceof Player) {
-                    Player player = (Player) sender;
-
-                    // Получаем текущую локацию игрока
-                    Location playerLocation = player.getLocation();
-
-                    // Получаем направление взгляда игрока
-                    Vector direction = playerLocation.getDirection();
-
-                    // Создаем лазер в направлении координаты
-                    createLaser(playerLocation, direction);
-
-                    return true;
+        return false;
+    }
+    private void createLaser(Location startLocation, Vector direction) {
+        Location laserLocation = startLocation.clone();
+        // Создаем лазер из блоков
+        new BukkitRunnable() {
+            int distance = 0;
+            @Override
+            public void run() {
+                // Увеличиваем дистанцию на 1
+                distance++;
+                // Получаем следующую локацию лазера
+                laserLocation.add(direction);
+                // Замена с блоков на партиклы
+                new ParticleBuilder(Particle.REDSTONE).allPlayers().location(laserLocation).offset(.5, .5, .5).extra(0.1).color(Color.RED).count(20).spawn();
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(60);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }.runTaskLater(getPlugin(), 60);
+                // Устанавливаем блоку материал лазера
+                // block.setType(Material.REDSTONE_BLOCK);
+                // Удаляем блок спустя 60 тиков (3 секунды)
+                // Если достигнута максимальная дистанция лазера, останавливаем задачу
+                if (distance >= 15) {
+                    cancel();
                 }
             }
-
-            return false;
-        }
-
-        private void createLaser(Location startLocation, Vector direction) {
-            Location laserLocation = startLocation.clone();
-
-            // Создаем лазер из блоков
-            new BukkitRunnable() {
-                int distance = 0;
-
-                @Override
-                public void run() {
-                    // Увеличиваем дистанцию на 1
-                    distance++;
-
-                    // Получаем следующую локацию лазера
-                    laserLocation.add(direction);
-                    // Замена с блоков на партиклы
-                    new ParticleBuilder(Particle.REDSTONE).allPlayers().location(laserLocation).spawn();
-
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(60);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    }.runTaskLater(getPlugin(), 60);
-
-                    // Устанавливаем блоку материал лазера
-                    // block.setType(Material.REDSTONE_BLOCK);
-
-                    // Удаляем блок спустя 60 тиков (3 секунды)
-
-
-                    // Если достигнута максимальная дистанция лазера, останавливаем задачу
-                    if (distance >= 15) {
-                        cancel();
-                    }
-                }
-            }.runTaskTimer(getPlugin(), 0, 3);
-        }
-
-        private Beam2 getPlugin() {
-            return this;
-        }
+        }.runTaskTimer(getPlugin(), 0, 3);
     }
+    private Beam2 getPlugin() {
+        return this;
+    }
+}
 /* Старый код по Matyu
     @Override
     public void onEnable() {
