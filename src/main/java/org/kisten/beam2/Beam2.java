@@ -43,7 +43,7 @@ public final class Beam2 extends JavaPlugin {
         Location laserLocation = startLocation.clone();
         Location Destination = new Location(laserLocation.getWorld(), 0, 100, 0);
         Vector travel = new Vector(Destination.getX() - startLocation.getX(), Destination.getY() - startLocation.getY(), Destination.getZ() - startLocation.getZ());
-        double numTrips = travel.length() / 0.5;
+        double numTrips = travel.length() / 0.2;
         travel.divide(new Vector(numTrips, numTrips, numTrips));
         // Создаем лазер из блоков
         new BukkitRunnable() {
@@ -55,17 +55,7 @@ public final class Beam2 extends JavaPlugin {
                 // Получаем следующую локацию лазера
                 laserLocation.add(travel);
                 // Замена с блоков на партиклы
-                new ParticleBuilder(Particle.REDSTONE).allPlayers().location(laserLocation).offset(.15, .15, .15).extra(0.1).color(Color.RED).count(20).spawn();
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(60);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }.runTaskLater(getPlugin(), 60);
+                new ParticleBuilder(Particle.REDSTONE).allPlayers().location(laserLocation).offset(.1, .1, .1).extra(0.1).color(Color.RED).count(3).spawn();
                 // Устанавливаем блоку материал лазера
                 // block.setType(Material.REDSTONE_BLOCK);
                 // Удаляем блок спустя 60 тиков (3 секунды)
@@ -74,7 +64,7 @@ public final class Beam2 extends JavaPlugin {
                     cancel();
                 }
             }
-        }.runTaskTimer(getPlugin(), 0, 3);
+        }.runTaskTimer(getPlugin(), 0, 1);
     }
     private Beam2 getPlugin() {
         return this;
