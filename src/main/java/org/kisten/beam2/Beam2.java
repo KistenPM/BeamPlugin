@@ -30,22 +30,49 @@ public final class Beam2 extends JavaPlugin {
                 Player player = (Player) sender;
                 // Получаем текущую локацию игрока
                 Location playerLocation = player.getEyeLocation();
-                // Получаем направление взгляда игрока
-                Vector direction = playerLocation.getDirection();
                 // Создаем лазер в направлении координаты
-                createLaser(playerLocation, direction);
+                Location start = new Location(playerLocation.getWorld(), 100.0, 100.0, 100);
+                createLaser(start, playerLocation);
+
                 return true;
             }
         }
         return false;
     }
-    private void createLaser(Location startLocation, Vector direction) {
+
+    private void createLaser(Location startLocation, Location PlayerLoc) {
         Location laserLocation = startLocation.clone();
-        Location Destination = new Location(laserLocation.getWorld(), 0, 100, 0);
-        Vector travel = new Vector(Destination.getX() - startLocation.getX(), Destination.getY() - startLocation.getY(), Destination.getZ() - startLocation.getZ());
-        double numTrips = travel.length() / 0.2;
+        Location Destination = new Location(laserLocation.getWorld(), -1, 100, -1);
+
+        double x1 = startLocation.getX(), y1 = startLocation.getZ(), x2 = Destination.getX(), y2 = Destination.getZ(), x3 = PlayerLoc.getX(), y3 = PlayerLoc.getZ();
+        final double v = ((x1 - x2) *
+                (x1 - x2)) + ((y1 - y2) * (y1 - y2));
+        double x = ((((x1 * x1 * x3) - (2 * x1 * x2 * x3)) + (x2 * x2 * x3) + (x2 *
+                (y1 - y2) * (y1 - y3))) - (x1 * (y1 - y2) * (y2 - y3))) / v;
+        double z = (x2 * x2 * y1 + x1 * x1 * y2 + x2 * x3 * (y2 - y1) - x1 *
+                (x3 * (y2 - y1) + x2 * (y1 + y2)) + (y1 - y2) * (y1 - y2) * y3) / v;
+
+        Location perp = new Location(laserLocation.getWorld(), x, 0, z);
+        Location PlayerXZ = new Location(laserLocation.getWorld(), PlayerLoc.getX(), 0, PlayerLoc.getZ());
+        double PerpLength = PlayerXZ.distance(perp);
+        double leg;
+        Vector ToEdge;
+        Location Edge;
+
+        if (PerpLength <= 15) {
+            leg = Math.sqrt(Math.pow(15, 2) - Math.pow(PerpLength, 2));
+            ToEdge = new Vector(laserLocation.getX() - perp.getX(), 0, laserLocation.getZ() - perp.getZ()).normalize().multiply(leg);
+            Edge = perp.clone().add(ToEdge);
+            perp.setY(laserLocation.getY());
+            Edge.setY(laserLocation.getY());
+        }
+        else {
+            return;
+
+        }
+        Vector travel = new Vector(perp.getX() - Edge.getX(), 0, perp.getZ() - Edge.getZ());
+        double numTrips = travel.length() / 0.7;
         travel.divide(new Vector(numTrips, numTrips, numTrips));
-        // Создаем лазер из блоков
         new BukkitRunnable() {
             int distance = 0;
             @Override
@@ -53,14 +80,36 @@ public final class Beam2 extends JavaPlugin {
                 // Увеличиваем дистанцию на 1
                 distance++;
                 // Получаем следующую локацию лазера
-                laserLocation.add(travel);
-                // Замена с блоков на партиклы
-                new ParticleBuilder(Particle.REDSTONE).allPlayers().location(laserLocation).offset(.1, .1, .1).extra(0.1).color(Color.RED).count(3).spawn();
+                if (startLocation.distance(perp) > startLocation.distance(Destination)) { // после точки назначения
+                    if (distance == 1) {
+                        Edge.add(ToEdge.multiply(-2));
+                        travel.multiply(-1);
+                    }
+                    new ParticleBuilder(Particle.REDSTONE).allPlayers().location(Edge).offset(.25, .25, .25).extra(0.1).color(Color.RED).count(4).spawn();
+                    Edge.add(travel);
+                }
+                if (perp.distance(Destination) - startLocation.distance(Destination) > 0) { // перед точкой начала
+                    if (distance == 1) {
+                        Edge.add(ToEdge.multiply(-2));
+                        travel.multiply(-1);
+                    }
+                    new ParticleBuilder(Particle.REDSTONE).allPlayers().location(Edge).offset(.25, .25, .25).extra(0.1).color(Color.RED).count(4).spawn();
+                    Edge.add(travel);
+                }
+                if (1 >= Edge.distance(Destination)) { // при точке назначения
+                    new ParticleBuilder(Particle.REDSTONE).allPlayers().location(Edge).offset(.5, .5, .5).extra(0.1).color(Color.ORANGE).count(20).spawn();
+                    new ParticleBuilder(Particle.REDSTONE).allPlayers().location(Edge).offset(.5, .5, .5).extra(0.1).color(Color.YELLOW).count(40).spawn();
+                    cancel();
+                }
+                else { // между точкой начала и концом
+                    new ParticleBuilder(Particle.REDSTONE).allPlayers().location(Edge).offset(.25, .25, .25).extra(0.1).color(Color.RED).count(4).spawn();
+                    Edge.add(travel);
+                }
                 // Устанавливаем блоку материал лазера
                 // block.setType(Material.REDSTONE_BLOCK);
                 // Удаляем блок спустя 60 тиков (3 секунды)
                 // Если достигнута максимальная дистанция лазера, останавливаем задачу
-                if (distance >= numTrips) {
+                if (distance >= numTrips * 2.5) {
                     cancel();
                 }
             }
