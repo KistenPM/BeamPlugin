@@ -9,6 +9,7 @@ import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.kisten.beam2.Listeners.onClickSpawnBeam;
+import org.kisten.beam2.Listeners.onJoin;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public final class Beam2 extends JavaPlugin {
         registerGlow();
         crafts();
         getServer().getPluginManager().registerEvents(new onClickSpawnBeam(), this);
+        getServer().getPluginManager().registerEvents(new onJoin(), this);
         getLogger().info("Плагин Laser включен!");
     }
 
@@ -34,6 +36,7 @@ public final class Beam2 extends JavaPlugin {
     public void onDisable() {
         // Плагин выключен
         getLogger().info("Плагин Laser выключен!");
+        Bukkit.getServer().getScheduler().cancelTasks(this);
     }
 
     public static Beam2 getInstance() {

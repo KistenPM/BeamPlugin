@@ -3,6 +3,8 @@ package org.kisten.beam2.Listeners;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.kisten.beam2.Beam2;
 import org.kisten.beam2.Laser;
 import net.kyori.adventure.text.Component;
@@ -25,7 +27,7 @@ public class onClickSpawnBeam implements Listener {
         Player p = event.getPlayer();
         ItemStack item = p.getEquipment().getItemInMainHand();
         if (item.getItemMeta().hasLore()) {
-            if (event.getAction() == Action.RIGHT_CLICK_AIR && (item.getType() == Material.BLAZE_ROD || item.getType() == Material.AMETHYST_SHARD)) {
+            if ((event.getAction() == Action.RIGHT_CLICK_AIR) && ((item.getType() == Material.BLAZE_ROD) || (item.getType() == Material.AMETHYST_SHARD)) && !p.getActivePotionEffects().contains(PotionEffectType.BLINDNESS)) {
                 Component Name = text("Посох пути").color(NamedTextColor.AQUA);
                 Component Magnet_Name = text("Намагниченный посох пути").color(NamedTextColor.DARK_PURPLE);
                 if (Objects.equals(item.getItemMeta().displayName(), Name)) {
@@ -37,6 +39,8 @@ public class onClickSpawnBeam implements Listener {
                     Location destination = new Location(p.getLocation().getWorld(), -100.0, 100.0, -100.0);
                     new Laser().laser(start, destination, p.getLocation(), true);
                 }
+                p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 200, 0));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 1));
             }
         }
     }
