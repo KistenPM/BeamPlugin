@@ -8,14 +8,14 @@ import org.bukkit.Particle;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import javax.print.attribute.standard.Destination;
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 public class Laser {
     public void laser(Location startLocation, Location destination, Location PlayerLoc, Boolean checkRadius) {
         Location laserLocation = startLocation.clone();
         Location Destination = destination.clone();
-        Location perp, Edge;
-        Vector ToEdge;
+        Location perp, Edge, Edge2;
+        Vector ToEdge, ToEdge2;
         if (checkRadius) {
             double x1 = startLocation.getX(), y1 = startLocation.getZ(), x2 = Destination.getX(), y2 = Destination.getZ(), x3 = PlayerLoc.getX(), y3 = PlayerLoc.getZ();
             final double v = ((x1 - x2) *
@@ -32,12 +32,13 @@ public class Laser {
             if (PerpLength <= 15) {
                 leg = Math.sqrt(Math.pow(15, 2) - Math.pow(PerpLength, 2));
                 ToEdge = new Vector(laserLocation.getX() - perp.getX(), 0, laserLocation.getZ() - perp.getZ()).normalize().multiply(leg);
-                Edge = perp.clone().add(ToEdge);
+                ToEdge2 = new Vector(Destination.getX() - perp.getX(), 0, Destination.getZ() - perp.getZ()).normalize().multiply(leg);
                 perp.setY(laserLocation.getY());
-                Edge.setY(laserLocation.getY());
+                Edge = perp.clone().add(ToEdge);
             } else if (PerpLength > 15) {
-                Location PerpPoint = PlayerLoc.add(new Vector(x - PlayerLoc.getX(), 0, z - PlayerLoc.getZ()).normalize().multiply(15));
-                new ParticleBuilder(Particle.REDSTONE).allPlayers().location(PerpPoint).offset(.1, .1, .1).extra(0.1).color(Color.YELLOW).count(20).spawn();
+                Location PerpPoint = PlayerLoc.add(new Vector(x - PlayerLoc.getX(), 0, z - PlayerLoc.getZ()));
+                PerpPoint.setY(startLocation.getY());
+                new ParticleBuilder(Particle.REDSTONE).allPlayers().location(PerpPoint).offset(.1, .15, .1).extra(0.1).color(Color.YELLOW).count(20).spawn();
                 return;
             } else {
                 return;
@@ -45,6 +46,8 @@ public class Laser {
         } else {
             perp = Destination;
             Edge = laserLocation;
+            perp.setY(laserLocation.getY());
+            Edge.setY(laserLocation.getY());
             ToEdge = new Vector(0, 0, 0);
         }
         Vector travel = new Vector(perp.getX() - Edge.getX(), 0, perp.getZ() - Edge.getZ());
@@ -60,19 +63,19 @@ public class Laser {
                 // Получаем следующую локацию лазера
                 if (startLocation.distance(perp) > startLocation.distance(Destination)) { // после точки назначения
                     if (distance == 1) {
-                        Edge.add(ToEdge.multiply(-2));
                         travel.multiply(-1);
+                        perp.subtract(ToEdge);
                     }
-                    new ParticleBuilder(Particle.REDSTONE).allPlayers().location(Edge).offset(.25, .25, .25).extra(0.1).color(Color.RED).count(4).spawn();
-                    Edge.add(travel);
+                    new ParticleBuilder(Particle.REDSTONE).allPlayers().location(perp).offset(.25, .25, .25).extra(0.1).color(Color.RED).count(4).spawn();
+                    perp.add(travel);
                 }
                 if (perp.distance(Destination) - startLocation.distance(Destination) > 0) { // перед точкой начала
                     if (distance == 1) {
-                        Edge.add(ToEdge.multiply(-2));
                         travel.multiply(-1);
+                        perp.subtract(ToEdge);
                     }
-                    new ParticleBuilder(Particle.REDSTONE).allPlayers().location(Edge).offset(.25, .25, .25).extra(0.1).color(Color.RED).count(4).spawn();
-                    Edge.add(travel);
+                    new ParticleBuilder(Particle.REDSTONE).allPlayers().location(perp).offset(.25, .25, .25).extra(0.1).color(Color.RED).count(4).spawn();
+                    perp.add(travel);
                 }
                 if (1 >= Edge.distance(Destination)) { // при точке назначения
                     new ParticleBuilder(Particle.REDSTONE).allPlayers().location(Edge).offset(.5, .5, .5).extra(0.1).color(Color.ORANGE).count(20).spawn();
@@ -87,10 +90,10 @@ public class Laser {
                 // block.setType(Material.REDSTONE_BLOCK);
                 // Удаляем блок спустя 60 тиков (3 секунды)
                 // Если достигнута максимальная дистанция лазера, останавливаем задачу
-                if (distance >= numTrips * 2.5) {
+                if (distance >= numTrips) {
                     cancel();
                 }
             }
-        }.runTaskTimer(Main.getInstance(), 0, 1);
+        }.runTaskTimer(Beam2.getInstance(), 0, 1);
     }
 }

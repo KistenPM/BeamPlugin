@@ -2,9 +2,8 @@ package org.kisten.beam2.Listeners;
 
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
 import org.bukkit.enchantments.Enchantment;
-import org.kisten.beam2.Glow;
+import org.kisten.beam2.Beam2;
 import org.kisten.beam2.Laser;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,16 +24,19 @@ public class onClickSpawnBeam implements Listener {
     public void takingDrugs(PlayerInteractEvent event) {
         Player p = event.getPlayer();
         ItemStack item = p.getEquipment().getItemInMainHand();
-        if (event.getAction() == Action.RIGHT_CLICK_AIR && item.getType() == Material.IRON_NUGGET) {
-            Component palka = text("Веди меня палочка!").color(NamedTextColor.DARK_PURPLE);
-            if (item.getItemMeta().lore().equals(palka)){
-                Location start = new Location(p.getLocation().getWorld(), 100.0, 100.0, 100);
-                Location destination = new Location(p.getLocation().getWorld(), 0.0, 100.0, 0);
-                new Laser().laser(start, destination, p.getLocation(), true);
-            } else if (item.getItemMeta().hasEnchant(Objects.requireNonNull(Enchantment.getByKey(new NamespacedKey("Glow", "glow"))))){
-                Location start = new Location(p.getLocation().getWorld(), -10.0, 100.0, -10);
-                Location destination = new Location(p.getLocation().getWorld(), -100.0, 100.0, -100.0);
-                new Laser().laser(start, destination, p.getLocation(), true);
+        if (item.getItemMeta().hasLore()) {
+            if (event.getAction() == Action.RIGHT_CLICK_AIR && (item.getType() == Material.BLAZE_ROD || item.getType() == Material.AMETHYST_SHARD)) {
+                Component Name = text("Посох пути").color(NamedTextColor.AQUA);
+                Component Magnet_Name = text("Намагниченный посох пути").color(NamedTextColor.DARK_PURPLE);
+                if (Objects.equals(item.getItemMeta().displayName(), Name)) {
+                    Location start = new Location(p.getLocation().getWorld(), 100.0, 100.0, 100);
+                    Location destination = new Location(p.getLocation().getWorld(), 0.0, 100.0, 0);
+                    new Laser().laser(start, destination, p.getLocation(), true);
+                } else if (Objects.equals(item.getItemMeta().displayName(), Magnet_Name)) {
+                    Location start = new Location(p.getLocation().getWorld(), -10.0, 100.0, -10);
+                    Location destination = new Location(p.getLocation().getWorld(), -100.0, 100.0, -100.0);
+                    new Laser().laser(start, destination, p.getLocation(), true);
+                }
             }
         }
     }

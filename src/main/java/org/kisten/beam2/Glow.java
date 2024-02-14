@@ -15,12 +15,47 @@ import java.util.Set;
 public class Glow extends Enchantment {
 
     public Glow() {
-        super(new NamespacedKey("Glow", "glow"));
+        super(new NamespacedKey(Beam2.getInstance(), "glow"));
     }
 
     @Override
-    public boolean canEnchantItem(ItemStack arg0) {
+    public @NotNull String getName() {
+        return "Удачи";
+    }
+
+    @Override
+    public int getMaxLevel() {
+        return 1;
+    }
+
+    @Override
+    public int getStartLevel() {
+        return 1;
+    }
+
+    @Override
+    public @NotNull EnchantmentTarget getItemTarget() {
+        return null;
+    }
+
+    @Override
+    public boolean isTreasure() {
         return false;
+    }
+
+    @Override
+    public boolean isCursed() {
+        return false;
+    }
+
+    @Override
+    public boolean conflictsWith(@NotNull Enchantment other) {
+        return false;
+    }
+
+    @Override
+    public boolean canEnchantItem(@NotNull ItemStack item) {
+        return true;
     }
 
     @Override
@@ -51,41 +86,6 @@ public class Glow extends Enchantment {
     @Override
     public @NotNull Set<EquipmentSlot> getActiveSlots() {
         return null;
-    }
-
-    @Override
-    public boolean conflictsWith(Enchantment arg0) {
-        return false;
-    }
-
-    @Override
-    public EnchantmentTarget getItemTarget() {
-        return null;
-    }
-
-    @Override
-    public boolean isTreasure() {
-        return false;
-    }
-
-    @Override
-    public boolean isCursed() {
-        return false;
-    }
-
-    @Override
-    public int getMaxLevel() {
-        return 0;
-    }
-
-    @Override
-    public String getName() {
-        return null;
-    }
-
-    @Override
-    public int getStartLevel() {
-        return 0;
     }
 
     @Override
