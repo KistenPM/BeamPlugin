@@ -29,7 +29,7 @@ public class TimeGetter {
         new BukkitRunnable() {
             @Override
             public void run() {
-                LocalDateTime targetDateTime = LocalDateTime.of(2024, 2, 14, 16, 30, 0);
+                LocalDateTime targetDateTime = LocalDateTime.of(2024, 2, 18, 13, 0, 0);
                 long remainingSeconds = ChronoUnit.SECONDS.between(LocalDateTime.now(ZoneOffset.UTC), targetDateTime);
                 System.out.println(remainingSeconds);
                 while (true) {
@@ -81,7 +81,7 @@ public class TimeGetter {
                             public void run() {
                                 new Laser().laser(start, destination, p, false);
                             }
-                        }.runTaskTimer(Beam2.getInstance(), 0, 60);
+                        }.runTaskTimer(Beam2.getInstance(), 0, 35);
                         break;
                     }
                     try {
