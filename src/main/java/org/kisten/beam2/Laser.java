@@ -10,6 +10,11 @@ import org.bukkit.util.Vector;
 
 
 public class Laser {
+
+    //
+    // Даже не пробуй понять что здесь это пиздец
+    //
+
     public void laser(Location startLocation, Location destination, Location PlayerLoc, Boolean checkRadius) {
         Location laserLocation = startLocation.clone();
         Location Destination = destination.clone();

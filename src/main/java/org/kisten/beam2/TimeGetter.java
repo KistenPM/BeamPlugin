@@ -21,6 +21,11 @@ import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.TextColor.color;
 
 public class TimeGetter {
+
+    //
+    // Даже не пробуй понять что здесь это пиздец
+    //
+
     //Функция для таймера, она обновляет его и когда таймер равен 0 - запускает функцию
     public TimeGetter() {
         World world = Bukkit.getWorld("world");

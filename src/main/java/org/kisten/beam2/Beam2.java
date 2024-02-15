@@ -25,10 +25,14 @@ public final class Beam2 extends JavaPlugin {
     public void onEnable() {
         // Плагин включен
         instance = this;
+        // Регистр зачар
         registerGlow();
+        // Регистр крафты
         crafts();
+        // Регистр листенеры
         getServer().getPluginManager().registerEvents(new onClickSpawnBeam(), this);
         getServer().getPluginManager().registerEvents(new onJoin(), this);
+
         getLogger().info("Плагин Laser включен!");
     }
 
@@ -36,13 +40,16 @@ public final class Beam2 extends JavaPlugin {
     public void onDisable() {
         // Плагин выключен
         getLogger().info("Плагин Laser выключен!");
+        // Отменяем все циклы
         Bukkit.getServer().getScheduler().cancelTasks(this);
     }
 
+    // Получаем инстанс плагина чтобы использовать в циклах баккита в других классах
     public static Beam2 getInstance() {
         return instance;
     }
 
+    // Регистриурем  энчант, хз как но да
     public void registerGlow() {
         try {
             Field f = Enchantment.class.getDeclaredField("acceptingNew");
@@ -55,8 +62,10 @@ public final class Beam2 extends JavaPlugin {
             e.printStackTrace();
         }
     }
-    public void crafts() {
 
+    //Создание крафтов
+    public void crafts() {
+        // Создание посоха пути
         Component palka = text("Веди меня палочка!").color(NamedTextColor.BLUE);
         Component Name = text("Посох пути").color(NamedTextColor.AQUA);
         ItemStack Wand = new ItemStack(Material.BLAZE_ROD);
@@ -74,7 +83,7 @@ public final class Beam2 extends JavaPlugin {
         Wand_recipe.setIngredient('B', Material.BLAZE_ROD);
         Bukkit.addRecipe(Wand_recipe);
 
-
+        // Создание бещенного магнита
         Component FCL = text("Куда же ты ведёшь..").color(NamedTextColor.GOLD);
         Component FCName = text("Бешенный компас").color(NamedTextColor.DARK_RED);
         ItemStack FC = new ItemStack(Material.COMPASS);
@@ -90,7 +99,7 @@ public final class Beam2 extends JavaPlugin {
         SmithingTransformRecipe FCRecipe = new SmithingTransformRecipe(FCKey, FC, new RecipeChoice.MaterialChoice(Material.AIR), new RecipeChoice.MaterialChoice(Material.COMPASS), new RecipeChoice.MaterialChoice(Material.NETHERITE_INGOT));
         Bukkit.addRecipe(FCRecipe);
 
-
+        // Создание намагн. посоха пути
         Component Magnet_palka = text("Приведи меня палочка..").color(NamedTextColor.BLUE);
         Component Magnet_Name = text("Намагниченный посох пути").color(NamedTextColor.DARK_PURPLE);
         ItemStack Magnet_Wand = new ItemStack(Material.AMETHYST_SHARD);
@@ -108,89 +117,3 @@ public final class Beam2 extends JavaPlugin {
 
     }
 }
-
-
-// Код для создания команды
-
-//    @Override
-//    public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
-//        if (command.getName().equalsIgnoreCase("laser")) {
-//            if (sender instanceof Player) {
-//                Player player = (Player) sender;
-//                // Получаем текущую локацию игрока
-//                Location playerLocation = player.getEyeLocation();
-//                // Создаем лазер в направлении координаты
-//                Location start = new Location(playerLocation.getWorld(), 100.0, 100.0, 100);
-//                createLaser(start, playerLocation);
-//
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
-/* Старый код по Matyu
-
-    @Override
-    public void onEnable() {
-        // Plugin startup logic
-    }
-
-    private static final Beam2 instance = new Beam2(); //Task
-    private Beam2() {
-    }
-
-    @Override
-    public void run() {
-        int length = 3;
-        double particleDistance = 0.5;
-
-        for (Player online : Bukkit.getOnlinePlayers()) {
-            ItemStack hand = online.getItemInHand();
-
-            if (hand.hasItemMeta() && hand.getItemMeta().getDisplayName().equals(ChatColor.WHITE + "Laser Pointer")) {
-                Location location = online.getLocation().add(0, 1,0);
-
-                for (double waypoint = 1; waypoint < length; waypoint += particleDistance) {
-                    Vector vector = location.getDirection().multiply(waypoint);
-                    location.add(vector);
-
-                    if (location.getBlock().getType() != Material.AIR)
-                        break;
-
-                    location.getWorld().spawnParticle(Particle.REDSTONE, location, 1, new Particle.DustOptions(Color.YELLOW, 0.75F));
-                }
-            }
-        }
-    }
-
-    public static Beam2 getInstance() {
-        return instance;
-    }
-
-    public class stick implements Listener { //TaskListener
-        @EventHandler
-        public void stick2(PlayerInteractEvent event) {
-            if (event.getHand() != EquipmentSlot.HAND || event.getAction() == Action.RIGHT_CLICK_AIR)
-                return;
-
-            Player player = event.getPlayer();
-            ItemStack hand = player.getItemInHand();
-            int distance = 30;
-
-            if (hand.hasItemMeta() && hand.getItemMeta().getDisplayName().equals(ChatColor.WHITE + "Laser Pointer"))
-                RayTraceResult result = player.rayTraceBlocks(distance);
-
-            if (result != null && result.getHitBlock() != null && result.getHitBlock(),isSolid())
-                player.getWorld().createExplosion(result.getHitBlock().getlocation(), 2F, true);
-            else
-                player.sendMessage(ChatColor.LIGHT_PURPLE + "[Laser]" + ChatColor.WHITE + "Target is too far or not solid!");
-        }
-    }
-
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
-    }
-}
- */

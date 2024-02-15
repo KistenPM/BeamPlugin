@@ -14,6 +14,10 @@ import java.util.Set;
 
 public class Glow extends Enchantment {
 
+    //
+    // Даже не пробуй понять что здесь это пиздец
+    //
+
     public Glow() {
         super(new NamespacedKey(Beam2.getInstance(), "glow"));
     }
