@@ -38,7 +38,7 @@ public class Laser {
                 Edge = perp.clone().add(toStart);
                 Edge2 = perp.clone().add(toEnd);
             } else if (PerpLength > 15) {
-                Location PerpPoint = PlayerLoc.add(new Vector(x - PlayerLoc.getX(), 0, z - PlayerLoc.getZ()));
+                Location PerpPoint = PlayerLoc.add(new Vector(x - PlayerLoc.getX(), 0, z - PlayerLoc.getZ()).normalize().multiply(15));
                 PerpPoint.setY(startLocation.getY());
                 new ParticleBuilder(Particle.REDSTONE).allPlayers().location(PerpPoint).offset(.1, .15, .1).allPlayers().extra(0.1).color(Color.YELLOW).count(20).spawn();
                 return;

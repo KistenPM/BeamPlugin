@@ -2,9 +2,11 @@ package org.kisten.beam2.Listeners;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.RayTraceResult;
 import org.kisten.beam2.Beam2;
 import org.kisten.beam2.Laser;
 import net.kyori.adventure.text.Component;
@@ -23,9 +25,20 @@ import static net.kyori.adventure.text.Component.text;
 
 public class onClickSpawnBeam implements Listener {
     @EventHandler
-    public void takingDrugs(PlayerInteractEvent event) {
+    public void onClick(PlayerInteractEvent event) {
+
+        //рейтрейс и добавление дамага
         Player p = event.getPlayer();
         ItemStack item = p.getEquipment().getItemInMainHand();
+        assert  item.getItemMeta() != null;
+        if (event.getAction() == Action.LEFT_CLICK_AIR) {
+            RayTraceResult res = p.rayTraceEntities(7, false);
+            LivingEntity ent = (LivingEntity) res.getHitEntity();
+            assert ent != null;
+            ent.damage(20);
+        }
+
+
         if (item.getItemMeta().hasLore()) {
             if ((event.getAction() == Action.RIGHT_CLICK_AIR) && ((item.getType() == Material.BLAZE_ROD) || (item.getType() == Material.AMETHYST_SHARD)) && !p.getActivePotionEffects().contains(PotionEffectType.DARKNESS)) {
                 Component Name = text("Посох пути").color(NamedTextColor.AQUA);
@@ -46,7 +59,7 @@ public class onClickSpawnBeam implements Listener {
                     @Override
                     public void run() {
                         amount++;
-                        p.playSound(p.getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 0.7F, 0.5F);
+                        p.playSound(p.getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 3.0F, 0.5F);
                         if (amount >= 8) {
                             cancel();
                         }

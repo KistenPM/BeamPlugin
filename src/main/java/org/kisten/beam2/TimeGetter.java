@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -41,7 +42,7 @@ public class TimeGetter {
                         String remainingHoursCleared = String.valueOf(remainingHours - remainingDays * 24);
                         String remainingMinutesCleared = String.valueOf(remainingMinutes - remainingHours * 60);
                         String remainingSecondsCleared = String.valueOf(remainingSeconds - remainingMinutes * 60L);
-                        final Component component = text()
+                        Component component = text()
                                 .content(String.valueOf(remainingDays)).color(color(GOLD))
                                 .append(text(":", GRAY))
                                 .append(text(remainingHoursCleared, GOLD))
@@ -50,6 +51,7 @@ public class TimeGetter {
                                 .append(text(":", GRAY))
                                 .append(text(remainingSecondsCleared, GOLD))
                                 .build();
+
                         // System.out.println("Время до " + targetDateTime.toString() + ": " + remainingDays + ":" + remainingHoursCleared + ":" + remainingMinutesCleared + ":" + remainingSecondsCleared);
                         for (Entity entity : displays) {
                             if (entity instanceof TextDisplay) {
